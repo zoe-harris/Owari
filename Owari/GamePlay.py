@@ -2,22 +2,27 @@
 # Programming Assignment #3
 # CSCE405 Artificial Intelligence
 
+from GameBoard import GameBoard
 
-class Gameplay:
+
+class GamePlay:
+
     def __init__(self):
-        print("Lets get it started!")
-        #game_board = GameBoard() #Initialize game board
+        self.board = GameBoard()
 
-    """This method (GetWhoMovesFirst) will interactively prompt the human opponent to select whether he or she wants
-    to move first or second."""
+    # prompt user to choose which player moves first, computer or human
     def get_moves_first(self):
-        """Steps:
-            1. Prompt opponent to determine if they move first or second.
-                1a. Repeat prompt if incorrect
-            2. gameplay_loop(user_input) """
 
-    """This method will run the general gameplay loop."""
-    def gameplay_loop(self, moves_first):
+            valid_input = ["HUMAN", "COMPUTER"]
+            user_input = ''
+
+            while user_input not in valid_input:
+                user_input = input("Who Moves First? [HUMAN / COMPUTER] ")
+
+            return user_input
+
+    # method controls flow of game play, exits when game is over
+    def play(self):
         """Steps:
             1. Determine whose moving first
                 1a. If moves_first = 1
@@ -33,12 +38,25 @@ class Gameplay:
     """This routine (GetHumanPlayerMove) will prompt the human opponent (NORTH) to specify the pit from which they
      want to move stones."""
     def get_human_move(self):
-        """Steps:
-            1. Prompt human for correct pit number. (7-12)
-                1a. If empty, error message & redisplay
-            2. pit_num = user_input
-            3. sow(pit_num)"""
-        print("Woooooo humans rule!")
+
+        human_move = -1
+        valid = False
+
+        while not valid:
+            valid = True
+            try:
+                human_move = int(input("Enter move: "))
+            except ValueError:
+                human_move = int(input("Input must be a positive integer. Enter move: "))
+                valid = False
+            if human_move < 0 or human_move > 6:
+                human_move = input("You must enter a pit number 0-6. Enter move: ")
+                valid = False
+            if self.board.board[human_move].seeds == 0:
+                human_move = input("The pit you selected is empty. Enter move: ")
+                valid = False
+
+        return human_move
 
     """This routine (GenerateComputerPlayerMove) will call GenerateMoves() for the min-max algorithm."""
     def get_computer_move(self):
