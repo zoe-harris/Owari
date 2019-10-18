@@ -5,5 +5,4 @@
 from GamePlay import GamePlay
 
 g = GamePlay()
-g.get_human_move()
-
+g.play()

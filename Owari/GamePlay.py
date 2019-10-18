@@ -13,30 +13,55 @@ class GamePlay:
     # prompt user to choose which player moves first, computer or human
     def get_moves_first(self):
 
-            valid_input = ["HUMAN", "COMPUTER"]
+            valid = False
             user_input = ''
 
-            while user_input not in valid_input:
+            while not valid:
                 user_input = input("Who Moves First? [HUMAN / COMPUTER] ")
+                if user_input == "HUMAN" or user_input == "COMPUTER":
+                    valid = True
 
             return user_input
 
-    # method controls flow of game play, exits when game is over
+    # get + play human and computer moves until game_over() returns True
     def play(self):
-        """Steps:
-            1. Determine whose moving first
-                1a. If moves_first = 1
-                    while game_over() is false:
-                        get_human_move()
-                        get_computer_move()
-                1b. If moves_first = 2
-                    while game_over() is false:
-                        get_computer_move()
-                        get_human_move() """
-        print("Time is an illusion.")
 
-    """This routine (GetHumanPlayerMove) will prompt the human opponent (NORTH) to specify the pit from which they
-     want to move stones."""
+        print("~~~~~~~~~~~~~ LET THE GAME BEGIN ~~~~~~~~~~~~~")
+
+        # get which player will take the first turn
+        first_player = self.get_moves_first()
+
+        # game plays with computer player taking the first turn
+        if first_player is "COMPUTER":
+
+            while True:
+                self.board.sow(self.get_computer_move)
+                self.board.display()
+                if self.board.game_over():
+                    break
+                self.board.sow(self.get_human_move)
+                self.board.display()
+                if self.board.game_over():
+                    break
+
+        # game plays with human player taking the first turn
+        if first_player is "HUMAN":
+
+            while True:
+                self.board.sow(self.get_human_move)
+                self.board.display()
+                if self.board.game_over():
+                    break
+                self.board.sow(self.get_computer_move)
+                self.board.display()
+                if self.board.game_over():
+                    break
+
+        print("~~~~~~~~~~~~~~~~~~ GAME OVER ~~~~~~~~~~~~~~~~~")
+        print("HUMAN'S TOTAL SEEDS: ", self.board.human_seeds())
+        print("COMPUTER'S TOTAL SEEDS: ", self.board.computer_seeds())
+
+    # prompt user until a valid move has been input
     def get_human_move(self):
 
         human_move = -1
@@ -58,23 +83,26 @@ class GamePlay:
 
         return human_move
 
-    """This routine (GenerateComputerPlayerMove) will call GenerateMoves() for the min-max algorithm."""
+    # generate computer move using mini-max with alpha-beta pruning
+    # FIXME: this method currently returns a user-input pit for the sake of testing.
+    #  Once mini-max is completed it should be rewritten accordingly.
     def get_computer_move(self):
-        """Steps:
-            1. Call GenerateMoves()
-            2. pit_num = returned from generate_moves
-            3. sow(pit_num)"""
-        print("Prepare for the robotic overlords.")
 
-    def sow(self, pit_num):
-        """Steps:
-        """
-        print("You reap what you sow.")
+        computer_move = -1
+        valid = False
 
-    def steal(self, pit_num):
-        """Steps:"""
-        print("Yoink.")
+        while not valid:
+            valid = True
+            try:
+                computer_move = int(input("Enter move: "))
+            except ValueError:
+                computer_move = int(input("Input must be a positive integer. Enter move: "))
+                valid = False
+            if computer_move < 7 or computer_move > 12:
+                computer_move = input("You must enter a pit number 7-12. Enter move: ")
+                valid = False
+            if self.board.board[computer_move].seeds == 0:
+                computer_move = input("The pit you selected is empty. Enter move: ")
+                valid = False
 
-    def game_over(self):
-        """Steps:"""
-        print("Have we finished yet??")
+        return computer_move

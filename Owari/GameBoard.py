@@ -67,11 +67,12 @@ class GameBoard:
             curr_pit_index += 1
 
         # if landed on an empty pit on my side, capture seeds opposite
-        if curr_pit.seeds == 0 and 0 <= curr_pit_index <= 6:
-            opponent_pit = self.board[opposite.get(curr_pit_index)]
-            self.board[6].seeds += opponent_pit.seeds
-            opponent_pit.seeds = 0
-            curr_pit.seeds += 1
+        if curr_pit.seeds == 0:
+            if 0 <= curr_pit_index <= 6:
+                opposite_pit = self.board[opposite.get(curr_pit_index)]
+                self.board[6].seeds += opposite_pit.seeds
+                opposite_pit.seeds = 0
+                curr_pit.seeds += 1
 
         # the starting pit now has zero seeds
         self.board[pit].seeds = 0
@@ -96,8 +97,8 @@ class GameBoard:
         else:
             return False
 
-    def my_seeds(self):
+    def human_seeds(self):
         return self.board[6].seeds
 
-    def opponent_seeds(self):
+    def computer_seeds(self):
         return self.board[13].seeds
