@@ -32,27 +32,29 @@ class GamePlay:
         first_player = self.get_moves_first()
 
         # game plays with computer player taking the first turn
-        if first_player is "COMPUTER":
+        if first_player == "COMPUTER":
 
             while True:
-                self.board.sow(self.get_computer_move)
+                self.board.sow(self.get_computer_move())
                 self.board.display()
                 if self.board.game_over():
                     break
-                self.board.sow(self.get_human_move)
+                self.board.sow(self.get_human_move())
                 self.board.display()
                 if self.board.game_over():
                     break
 
         # game plays with human player taking the first turn
-        if first_player is "HUMAN":
+        if first_player == "HUMAN":
 
             while True:
-                self.board.sow(self.get_human_move)
+                self.board.sow(self.get_human_move())
                 self.board.display()
                 if self.board.game_over():
                     break
-                self.board.sow(self.get_computer_move)
+                computer_move = self.get_computer_move()
+                print("\nThe computer chose pit ", computer_move)
+                self.board.sow(computer_move)
                 self.board.display()
                 if self.board.game_over():
                     break
@@ -70,7 +72,7 @@ class GamePlay:
         while not valid:
             valid = True
             try:
-                human_move = int(input("Enter move: "))
+                human_move = int(input("\nEnter move: "))
             except ValueError:
                 human_move = int(input("Input must be a positive integer. Enter move: "))
                 valid = False
@@ -94,15 +96,15 @@ class GamePlay:
         while not valid:
             valid = True
             try:
-                computer_move = int(input("Enter move: "))
+                computer_move = int(input("COMPUTER MOVE: "))
             except ValueError:
-                computer_move = int(input("Input must be a positive integer. Enter move: "))
+                print("Input must be a positive integer. ", end='')
                 valid = False
-            if computer_move < 7 or computer_move > 12:
-                computer_move = input("You must enter a pit number 7-12. Enter move: ")
+            if valid is True and (computer_move < 7 or computer_move > 12):
+                print("You must enter a pit number 7-12. ", end='')
                 valid = False
-            if self.board.board[computer_move].seeds == 0:
-                computer_move = input("The pit you selected is empty. Enter move: ")
+            if valid is True and (self.board.board[computer_move].seeds == 0):
+                print("The pit you selected is empty. ", end='')
                 valid = False
 
         return computer_move
