@@ -4,5 +4,5 @@
 
 from GamePlay import GamePlay
 
-g = GamePlay()
-g.play()
+owari = GamePlay()
+owari.play()
