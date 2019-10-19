@@ -80,8 +80,6 @@ class GameBoard:
     # pit sown was empty, the opponent's seeds will be captured.
     def sow(self, pit):
 
-        print("\nSow from pit", pit, ":")
-
         # determine whether play is human or computer using pit index
         human = False
         computer = False
