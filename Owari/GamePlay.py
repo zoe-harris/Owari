@@ -2,61 +2,109 @@
 # Programming Assignment #3
 # CSCE405 Artificial Intelligence
 
+from GameBoard import GameBoard
 
-class Gameplay:
+
+class GamePlay:
+
     def __init__(self):
-        print("Lets get it started!")
-        #game_board = GameBoard() #Initialize game board
+        self.board = GameBoard()
 
-    """This method (GetWhoMovesFirst) will interactively prompt the human opponent to select whether he or she wants
-    to move first or second."""
+    # prompt user to choose which player moves first, computer or human
     def get_moves_first(self):
-        """Steps:
-            1. Prompt opponent to determine if they move first or second.
-                1a. Repeat prompt if incorrect
-            2. gameplay_loop(user_input) """
 
-    """This method will run the general gameplay loop."""
-    def gameplay_loop(self, moves_first):
-        """Steps:
-            1. Determine whose moving first
-                1a. If moves_first = 1
-                    while game_over() is false:
-                        get_human_move()
-                        get_computer_move()
-                1b. If moves_first = 2
-                    while game_over() is false:
-                        get_computer_move()
-                        get_human_move() """
-        print("Time is an illusion.")
+            valid = False
+            user_input = ''
 
-    """This routine (GetHumanPlayerMove) will prompt the human opponent (NORTH) to specify the pit from which they
-     want to move stones."""
+            while not valid:
+                user_input = input("Who Moves First? [HUMAN / COMPUTER] ")
+                if user_input == "HUMAN" or user_input == "COMPUTER":
+                    valid = True
+
+            return user_input
+
+    # get + play human and computer moves until game_over() returns True
+    def play(self):
+
+        print("~~~~~~~~~~~~~ LET THE GAME BEGIN ~~~~~~~~~~~~~")
+
+        # get which player will take the first turn
+        first_player = self.get_moves_first()
+
+        # game plays with computer player taking the first turn
+        if first_player == "COMPUTER":
+
+            while True:
+                self.board.sow(self.get_computer_move())
+                self.board.display()
+                if self.board.game_over():
+                    break
+                self.board.sow(self.get_human_move())
+                self.board.display()
+                if self.board.game_over():
+                    break
+
+        # game plays with human player taking the first turn
+        if first_player == "HUMAN":
+
+            while True:
+                self.board.sow(self.get_human_move())
+                self.board.display()
+                if self.board.game_over():
+                    break
+                computer_move = self.get_computer_move()
+                print("\nThe computer chose pit ", computer_move)
+                self.board.sow(computer_move)
+                self.board.display()
+                if self.board.game_over():
+                    break
+
+        print("~~~~~~~~~~~~~~~~~~ GAME OVER ~~~~~~~~~~~~~~~~~")
+        print("HUMAN'S TOTAL SEEDS: ", self.board.human_seeds())
+        print("COMPUTER'S TOTAL SEEDS: ", self.board.computer_seeds())
+
+    # prompt user until a valid move has been input
     def get_human_move(self):
-        """Steps:
-            1. Prompt human for correct pit number. (7-12)
-                1a. If empty, error message & redisplay
-            2. pit_num = user_input
-            3. sow(pit_num)"""
-        print("Woooooo humans rule!")
 
-    """This routine (GenerateComputerPlayerMove) will call GenerateMoves() for the min-max algorithm."""
+        human_move = -1
+        valid = False
+
+        while not valid:
+            valid = True
+            try:
+                human_move = int(input("\nEnter move: "))
+            except ValueError:
+                human_move = int(input("Input must be a positive integer. Enter move: "))
+                valid = False
+            if human_move < 0 or human_move > 6:
+                human_move = input("You must enter a pit number 0-6. Enter move: ")
+                valid = False
+            if self.board.board[human_move].seeds == 0:
+                human_move = input("The pit you selected is empty. Enter move: ")
+                valid = False
+
+        return human_move
+
+    # generate computer move using mini-max with alpha-beta pruning
+    # FIXME: this method currently returns a user-input pit for the sake of testing.
+    #  Once mini-max is completed it should be rewritten accordingly.
     def get_computer_move(self):
-        """Steps:
-            1. Call GenerateMoves()
-            2. pit_num = returned from generate_moves
-            3. sow(pit_num)"""
-        print("Prepare for the robotic overlords.")
 
-    def sow(self, pit_num):
-        """Steps:
-        """
-        print("You reap what you sow.")
+        computer_move = -1
+        valid = False
 
-    def steal(self, pit_num):
-        """Steps:"""
-        print("Yoink.")
+        while not valid:
+            valid = True
+            try:
+                computer_move = int(input("COMPUTER MOVE: "))
+            except ValueError:
+                print("Input must be a positive integer. ", end='')
+                valid = False
+            if valid is True and (computer_move < 7 or computer_move > 12):
+                print("You must enter a pit number 7-12. ", end='')
+                valid = False
+            if valid is True and (self.board.board[computer_move].seeds == 0):
+                print("The pit you selected is empty. ", end='')
+                valid = False
 
-    def game_over(self):
-        """Steps:"""
-        print("Have we finished yet??")
+        return computer_move
