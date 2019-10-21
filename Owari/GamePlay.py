@@ -60,8 +60,16 @@ class GamePlay:
                     break
 
         print("~~~~~~~~~~~~~~~~~~ GAME OVER ~~~~~~~~~~~~~~~~~")
-        print("HUMAN'S TOTAL SEEDS: ", self.board.human_seeds())
-        print("COMPUTER'S TOTAL SEEDS: ", self.board.computer_seeds())
+        self.board.display()
+        # print("HUMAN'S TOTAL SEEDS: ", self.board.human_seeds())
+        # print("COMPUTER'S TOTAL SEEDS: ", self.board.computer_seeds())
+
+        if self.board.human_goal.seeds > self.board.computer_goal.seeds:
+            print("~~~~~~~~~~~~~~~~~ HUMAN WINS ~~~~~~~~~~~~~~~~~")
+        elif self.board.human_goal.seeds < self.board.computer_goal.seeds:
+            print("~~~~~~~~~~~~~~~ COMPUTER WINS ~~~~~~~~~~~~~~~~")
+        else:
+            print("~~~~~~~~~~~~~~~~ It's a draw! ~~~~~~~~~~~~~~~~")
 
     # prompt user until a valid move has been input
     def get_human_move(self):

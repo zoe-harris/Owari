@@ -20,13 +20,13 @@ class GameBoard:
         for i in range(0, 6):
             self.board.append(Pit(3))
         self.board.append(Pit(0))
-        self.board[6].my_goal = True
+        self.human_goal = self.board[6]
 
         # make six pits and a goal for opponent
         for i in range(7, 13):
             self.board.append(Pit(3))
         self.board.append(Pit(0))
-        self.board[13].opponent_goal = True
+        self.computer_goal = self.board[13]
         
         # set next for all pits on the board
         for i in range(13):
@@ -130,9 +130,21 @@ class GameBoard:
                 opponent_side_empty = False
 
         # if all pits on either side are empty, game over
+        # if game over, move all seeds into respective goals
         if my_side_empty or opponent_side_empty:
+
+            for i in range(6):
+                self.board[6].seeds += self.board[i].seeds
+                self.board[i].seeds = 0
+
+            for i in range(7, 13):
+                self.board[13].seeds += self.board[i].seeds
+                self.board[i].seeds = 0
+
             return True
+
         else:
+
             return False
 
     def human_seeds(self):
