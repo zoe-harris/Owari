@@ -10,3 +10,10 @@ class Pit:
         self.opponent_goal = False
         self.my_goal = False
         self.next = None
+
+
+class State:
+    def __init__(self, state):
+        self.state = state
+        self.fitness = None
+        self.successors = []
