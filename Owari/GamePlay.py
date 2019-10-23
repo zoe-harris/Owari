@@ -3,6 +3,7 @@
 # CSCE405 Artificial Intelligence
 
 from GameBoard import GameBoard
+from MiniMax import MiniMax
 
 
 class GamePlay:
@@ -35,7 +36,9 @@ class GamePlay:
         if first_player == "COMPUTER":
 
             while True:
-                self.board.sow(self.get_computer_move())
+                computer_move = self.get_computer_move()
+                print("\nThe computer chose pit ", computer_move)
+                self.board.sow(computer_move)
                 self.board.display()
                 if self.board.game_over():
                     break
@@ -98,7 +101,11 @@ class GamePlay:
     #  Once mini-max is completed it should be rewritten accordingly.
     def get_computer_move(self):
 
-        computer_move = -1
+        move = MiniMax(self.board)
+        move.generate_moves()
+        computer_move = move.alpha_beta_search()
+        #print("\nThe computer chose pit ", computer_move)
+        """computer_move = -1
         valid = False
 
         while not valid:
@@ -113,6 +120,6 @@ class GamePlay:
                 valid = False
             if valid is True and (self.board.board[computer_move].seeds == 0):
                 print("The pit you selected is empty. ", end='')
-                valid = False
+                valid = False"""
 
         return computer_move
