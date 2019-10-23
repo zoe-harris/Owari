@@ -36,7 +36,9 @@ class GamePlay:
         if first_player == "COMPUTER":
 
             while True:
-                self.board.sow(self.get_computer_move())
+                computer_move = self.get_computer_move()
+                print("\nThe computer chose pit ", computer_move)
+                self.board.sow(computer_move)
                 self.board.display()
                 if self.board.game_over():
                     break
@@ -102,7 +104,7 @@ class GamePlay:
         move = MiniMax(self.board)
         move.generate_moves()
         computer_move = move.alpha_beta_search()
-        print("\nThe computer chose pit ", computer_move)
+        #print("\nThe computer chose pit ", computer_move)
         """computer_move = -1
         valid = False
 
