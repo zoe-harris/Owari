@@ -13,5 +13,6 @@ class Pit:
 class State:
     def __init__(self, state):
         self.state = state
-        self.fitness = None
+        self.fitness = -500
+        self.branch_num = -1
         self.successors = []
