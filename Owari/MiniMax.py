@@ -30,26 +30,26 @@ class MiniMax:
         curr_state = self.root
 
         while counter != LOOK_AHEAD:
-            # MAX: Check all of OUR possible moves
-            for x in range(6):
+            # MAX: Check all of the COMPUTER'S possible moves
+            for x in range(7, 13):
                 option = copy.deepcopy(curr_state)
-                option.state.sow(x)
-                option.pit = x
-                option.branch_num = x
-                curr_state.successors.append(option)
-                moves.put(option)
-
-            # MIN: Remove the first move from the queue and expand all possible moves from that point
-            for y in range(6):
-                curr_state = moves.get()
-                for x in range(7, 13):
-                    option = copy.deepcopy(curr_state)
+                if option.state.board[x].seeds != 0:
                     option.state.sow(x)
-                    option.pit = x
-                    option.branch_num = y
-                    self.calc_fitness(option)
+                    option.branch_num = x
                     curr_state.successors.append(option)
                     moves.put(option)
+
+            # MIN: Remove the first move from the queue and expand all possible moves from that point
+            for y in range(7, 13):
+                curr_state = moves.get()
+                for x in range(6):
+                    option = copy.deepcopy(curr_state)
+                    if option.state.board[x].seeds != 0:
+                        option.state.sow(x)
+                        option.branch_num = y
+                        self.calc_fitness(option)
+                        curr_state.successors.append(option)
+                        moves.put(option)
 
             counter += 1
 
@@ -74,7 +74,7 @@ class MiniMax:
             fitness += 1
 
         state.fitness = fitness
-        print(fitness)
+        #print(fitness)
         return fitness
 
     # This method will return the greater of two given values
@@ -89,7 +89,7 @@ class MiniMax:
     def successors(self, state, v):
         # If value is found, return that state
         if state.fitness == v:
-            print("Value found ", v)
+            #print("Value found ", v)
             return state
 
         # Starting at the current state, check all possible moves
@@ -156,9 +156,9 @@ class MiniMax:
         v = self.max_value(curr_state, NEGATIVE_INF, POSITIVE_INF)
         return self.successors(curr_state, v).branch_num
 
-    # This method determines the numberic outcome of the game
+    # This method determines the numeric outcome of the game
     def utility(self, state):
-        if state.board[6].seeds > state.board[13].seeds:
-            print("I win.")
+        if state.state.board[6].seeds > state.state.board[13].seeds:
+            return -500
         else:
-            print("Opponent Wins")
+            return 500

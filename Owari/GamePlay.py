@@ -102,6 +102,7 @@ class GamePlay:
         move = MiniMax(self.board)
         move.generate_moves()
         computer_move = move.alpha_beta_search()
+        print("\nThe computer chose pit ", computer_move)
         """computer_move = -1
         valid = False
 
