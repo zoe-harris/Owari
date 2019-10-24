@@ -10,8 +10,8 @@ import GameBoard
 # To check for leaf, successors = empty list
 # Global variables
 LOOK_AHEAD = 1
-POSITIVE_INF = 1000#float("inf")
-NEGATIVE_INF = -1000#float("-inf")
+POSITIVE_INF = 1000  #float("inf")
+NEGATIVE_INF = -1000  #float("-inf")
 
 
 # The State class will allow us to create objects that hold the state & its fitness / value of each move to then
@@ -23,58 +23,80 @@ class MiniMax:
         self.root = State(state)
         self.node = None
 
+    # TO DO: Figure out why we always start with pit 7?
     # This method creates every move and inserts them into the successors list of a given state for later navigation
     def generate_moves(self):
         moves = queue.Queue(0)
         counter = 0
         curr_state = self.root
 
-        while counter != LOOK_AHEAD:
-            # MAX: Check all of the COMPUTER'S possible moves
-            for x in range(7, 13):
+        # MAX: Check all of the COMPUTER'S possible moves
+        for x in range(7, 13):
+            if curr_state.state.board[x].seeds != 0:
+                # If the current pit is not empty, generate a sow
                 option = copy.deepcopy(curr_state)
-                if option.state.board[x].seeds != 0:
-                    option.state.sow(x)
-                    option.branch_num = x
-                    curr_state.successors.append(option)
-                    moves.put(option)
+                option.state.sow(x)
+                option.branch_num = x
+                option.fitness = self.calc_fitness(option)
+                curr_state.successors.append(option)
+                moves.put(option)
 
-            # MIN: Remove the first move from the queue and expand all possible moves from that point
-            for y in range(7, 13):
+        while counter != LOOK_AHEAD:
+            size = moves.qsize()
+            # MIN: Remove the first move from the queue and expand all possible HUMAN moves from that point
+            for y in range(size):  # Ensures we are only looping + creating enough options for what exists
                 curr_state = moves.get()
                 for x in range(6):
-                    option = copy.deepcopy(curr_state)
-                    if option.state.board[x].seeds != 0:
+                    # If the current pit is not empty, generate a sow
+                    if curr_state.state.board[x].seeds != 0:
+                        option = copy.deepcopy(curr_state)
                         option.state.sow(x)
-                        option.branch_num = y
-                        self.calc_fitness(option)
+                        option.fitness = self.calc_fitness(option)
+                        curr_state.successors.append(option)
+                        moves.put(option)
+
+            size = moves.qsize()
+            # MAX: Check all of the COMPUTER'S possible moves
+            for y in range(size):  # Ensures we are only looping + creating enough options for what exists
+                curr_state = moves.get()
+                for x in range(7, 13):
+                    # If the current pit is not empty, generate a sow
+                    if curr_state.state.board[x].seeds != 0:
+                        option = copy.deepcopy(curr_state)
+                        option.state.sow(x)
+                        option.fitness = self.calc_fitness(option)
                         curr_state.successors.append(option)
                         moves.put(option)
 
             counter += 1
 
+    # TO DO: Determine "better" fitness
     # This method determines how good of a move the opponent can make
     def calc_fitness(self, state):
-        my_side = 0
-        opp_side = 0
+        """ Computer Wants:
+                -Minimize pit < 3 seeds on our side
+                -Maximize pit < 3 on opponent side
+                -Large number of seeds into 1 pit on our side
+                """
         fitness = 0
         curr_state = state.state
         for x in range(0, 6):
-            my_side += curr_state.board[x].seeds
+            if curr_state.board[x].seeds < 3:
+                fitness += 3
 
         for x in range(7, 13):
-            opp_side += curr_state.board[x].seeds
-            if (curr_state.board[x] == 0) and (curr_state.board[curr_state.opposite.get(x)] != 0):
-                fitness += 1
-
-        if my_side < opp_side:
-            fitness += (opp_side - my_side)
+            if curr_state.board[x].seeds == 0:
+                fitness += 4
+            elif curr_state.board[x].seeds > 12:
+                fitness += 2
+            elif curr_state.board[x].seeds > 3:
+                fitness += 3
+            else:
+                fitness -= 3
 
         if curr_state.board[6].seeds < curr_state.board[13].seeds:
             fitness += 1
 
-        state.fitness = fitness
-        #print(fitness)
         return fitness
 
     # This method will return the greater of two given values
@@ -89,7 +111,6 @@ class MiniMax:
     def successors(self, state, v):
         # If value is found, return that state
         if state.fitness == v:
-            #print("Value found ", v)
             return state
 
         # Starting at the current state, check all possible moves
@@ -116,7 +137,6 @@ class MiniMax:
         for s in curr_state.successors:
             v = max(v, self.min_value(s, alpha, beta))
             if v >= beta:
-                self.node = s
                 return v
             alpha = max(alpha, v)
             s.fitness = v
@@ -132,7 +152,6 @@ class MiniMax:
     # This method returns the smallest value in the successors of a given state
     def min_value(self, curr_state, alpha, beta):
         if curr_state.state.game_over():  # If game over
-            curr_state.state.display()
             return self.utility(curr_state)  # Numeric outcome of game
 
         # We are at a leaf (bottom of the tree), return the fitness
@@ -144,18 +163,23 @@ class MiniMax:
         for s in curr_state.successors:
             v = min(v, self.max_value(s, alpha, beta))
             if v <= alpha:
-                self.node = s
                 return v
             beta = min(beta, v)
             s.fitness = v
         return v
 
-    # This method does a thing
+    # This method kicks off the alpha-beta pruning
     def alpha_beta_search(self):
         curr_state = self.root
+        # If there is only one move to make, then don't waste time
+        if len(self.root.successors) == 1:
+            return self.root.successors[0].branch_num
+
+        # Else, perform alpha beta pruning to find the best move
         v = self.max_value(curr_state, NEGATIVE_INF, POSITIVE_INF)
         return self.successors(curr_state, v).branch_num
 
+    # TO DO: Clean this up / find a better way to handle this.
     # This method determines the numeric outcome of the game
     def utility(self, state):
         if state.state.board[6].seeds > state.state.board[13].seeds:
