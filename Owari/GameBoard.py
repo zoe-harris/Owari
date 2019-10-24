@@ -14,7 +14,7 @@ class GameBoard:
 
         # dictionary of which pits are opposite each other on the board
         self.opposite = {0: 12, 1: 11, 2: 10, 3: 9, 4: 8, 5: 7,
-                         12: 0, 11: 1, 10: 2, 9: 3, 8: 3, 7: 5}
+                         12: 0, 11: 1, 10: 2, 9: 3, 8: 4, 7: 5}
 
         # make six pits and a goal for myself
         for i in range(0, 6):

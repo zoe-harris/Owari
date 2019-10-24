@@ -5,8 +5,11 @@
 
 class Pit:
 
+    # Each pit object represents a pit on the Owari board
     def __init__(self, seeds=0):
+        # This represents the number of seeds in a pit
         self.seeds = seeds
+        # This is the next pit on the board (the pit a seed will be next dropped into when sown)
         self.next = None
 
 

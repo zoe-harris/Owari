@@ -88,7 +88,7 @@ class GamePlay:
                 human_move = int(input("Input must be a positive integer. Enter move: "))
                 valid = False
             if human_move < 0 or human_move > 6:
-                human_move = input("You must enter a pit number 0-6. Enter move: ")
+                human_move = input("You must enter a pit number 0-5. Enter move: ")
                 valid = False
             if self.board.board[human_move].seeds == 0:
                 human_move = input("The pit you selected is empty. Enter move: ")

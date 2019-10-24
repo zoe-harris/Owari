@@ -73,29 +73,27 @@ class MiniMax:
     # TO DO: Determine "better" fitness
     # This method determines how good of a move the opponent can make
     def calc_fitness(self, state):
-        """ Computer Wants:
-                -Minimize pit < 3 seeds on our side
-                -Maximize pit < 3 on opponent side
-                -Large number of seeds into 1 pit on our side
-                """
+
         fitness = 0
         curr_state = state.state
-        for x in range(0, 6):
-            if curr_state.board[x].seeds < 3:
-                fitness += 3
+        human_seeds = 0
+        computer_seeds = 0
 
-        for x in range(7, 13):
+        for x in range(0, 7):
+            human_seeds += curr_state.board[x].seeds
+
+        for x in range(7, 14):
+            computer_seeds += curr_state.board[x].seeds
+            # maximize number of seeds on my side
+            fitness += curr_state.board[x].seeds
+            # minimize number of empty pits on my side
             if curr_state.board[x].seeds == 0:
-                fitness += 4
-            elif curr_state.board[x].seeds > 12:
-                fitness += 2
-            elif curr_state.board[x].seeds > 3:
-                fitness += 3
-            else:
-                fitness -= 3
+                fitness -= 5
 
-        if curr_state.board[6].seeds < curr_state.board[13].seeds:
-            fitness += 1
+        # if there are more seeds on the computer side than
+        # the human side, this significantly increases fitness
+        if computer_seeds > human_seeds:
+            fitness += 25
 
         return fitness
 
